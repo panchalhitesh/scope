@@ -1,14 +1,12 @@
 import React from 'react';
 import { Motion } from 'react-motion';
 
+import { GraphNode } from 'weaveworks-ui-components';
 import { weakSpring } from 'weaveworks-ui-components/lib/utils/animation';
-
-import Node from './node';
-
 
 const transformedNode = (otherProps, { x, y, k }) => (
   <g transform={`translate(${x},${y}) scale(${k})`}>
-    <Node {...otherProps} />
+    <GraphNode {...otherProps} />
   </g>
 );
 

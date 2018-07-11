@@ -60,7 +60,6 @@ export function getMetricColor(metric) {
   } else if (/cpu/.test(metricId)) {
     return colors('cpu').toString();
   } else if (/files/.test(metricId)) {
-    // purple
     return '#9467bd';
   } else if (/load/.test(metricId)) {
     return colors('load').toString();

@@ -19,6 +19,9 @@ import {
   layoutNodesSelector,
   layoutEdgesSelector
 } from '../selectors/graph-view/layout';
+import { getNodeColor } from '../utils/color-utils';
+import { getMetricColor, getMetricValue } from '../utils/metric-utils';
+import { enterNode, leaveNode } from '../actions/app-actions';
 
 import {
   BLURRED_EDGES_LAYER,
@@ -148,26 +151,35 @@ class NodesChartElements extends React.Component {
 
   renderNode(node) {
     const { isAnimated, contrastMode } = this.props;
+    const color = getNodeColor(node.get('rank'), node.get('label'), node.get('pseudo'));
+    const metricColor = getMetricColor(node.get('metric'));
+    const metricLabel = getMetricValue(node.get('metric')).formattedValue;
+    const metricValue = getMetricValue(node.get('metric')).height;
+
     return (
       <NodeContainer
-        matches={node.get('matches')}
-        networks={node.get('networks')}
-        metric={node.get('metric')}
-        focused={node.get('focused')}
-        highlighted={node.get('highlighted')}
-        shape={node.get('shape')}
-        stack={node.get('stack')}
-        key={node.get('id')}
         id={node.get('id')}
+        key={node.get('id')}
+        type={node.get('shape')}
         label={node.get('label')}
         labelMinor={node.get('labelMinor')}
-        pseudo={node.get('pseudo')}
-        rank={node.get('rank')}
+        color={color}
+        metricColor={metricColor}
+        metricLabel={metricLabel}
+        metricValue={metricValue}
+        matches={node.get('matches')}
+        networks={node.get('networks')}
+        focused={node.get('focused')}
+        highlighted={node.get('highlighted')}
+        stacked={node.get('stack')}
         dx={node.get('x')}
         dy={node.get('y')}
         scale={node.get('scale')}
+        size={100}
         isAnimated={isAnimated}
         contrastMode={contrastMode}
+        onMouseEnter={this.props.enterNode}
+        onMouseLeave={this.props.leaveNode}
       />
     );
   }
@@ -282,4 +294,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(NodesChartElements);
+export default connect(mapStateToProps, { enterNode, leaveNode })(NodesChartElements);
