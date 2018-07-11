@@ -431,62 +431,6 @@ a {
     }
   }
 
-  text {
-    font-family: $font-family-regular;
-    fill: $text-secondary-color;
-  }
-
-  .nodes-chart-elements .node {
-    .node-label-minor {
-      line-height: 125%;
-    }
-
-    .node-labels-container {
-      transform: scale($node-text-scale);
-      pointer-events: none;
-    }
-
-    .node-label-wrapper {
-      //
-      // Base line height doesn't hop across foreignObject =/
-      //
-      line-height: 150%;
-
-      //
-      // inline-block so wrapper is only as wide as content.
-      //
-      display: inline-block;
-
-      //
-      // - inline-block gets a different baseline depending on overflow value
-      // - this element gets its overflow value changed sometimes.
-      // - explicitly set the baseline so the text doesn't jump up and down.
-      // http://stackoverflow.com/questions/9273016
-      //
-      vertical-align: top;
-
-      cursor: pointer;
-      pointer-events: all;
-      width: 100%;
-    }
-
-    .node-label, .node-label-minor {
-      span {
-        border-radius: $border-radius-soft;
-      }
-      span:not(.match) {
-        padding: 0 0.25em;
-        background-color: $label-background-color;
-      }
-      span:empty {
-        padding: 0;
-      }
-    }
-    .matched-results {
-      background-color: $label-background-color;
-    }
-  }
-
   .edge {
     .link-none {
       fill: none;
@@ -517,32 +461,6 @@ a {
   .edge-marker {
     color: $edge-color;
     fill: $edge-color;
-  }
-}
-
-.matched-results {
-  text-align: center;
-
-  &-match {
-    font-size: $font-size-small;
-
-    &-wrapper {
-      display: inline-block;
-      margin: 1px;
-      padding: 2px 4px;
-      background-color: transparentize($color-blue-400, 0.9);
-    }
-
-    &-label {
-      color: $text-secondary-color;
-      margin-right: 0.5em;
-    }
-  }
-
-  &-more {
-    font-size: $font-size-tiny;
-    color: $color-blue-700;
-    margin-top: -2px;
   }
 }
 
