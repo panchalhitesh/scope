@@ -21,7 +21,7 @@ import {
 } from '../selectors/graph-view/layout';
 import { getNodeColor } from '../utils/color-utils';
 import { getMetricColor, getMetricValue } from '../utils/metric-utils';
-import { enterNode, leaveNode } from '../actions/app-actions';
+import { enterNode, leaveNode, clickNode } from '../actions/app-actions';
 
 import {
   BLURRED_EDGES_LAYER,
@@ -152,6 +152,7 @@ class NodesChartElements extends React.Component {
   renderNode(node) {
     const { isAnimated, contrastMode } = this.props;
     const color = getNodeColor(node.get('rank'), node.get('label'), node.get('pseudo'));
+
     const metricColor = getMetricColor(node.get('metric'));
     const metricLabel = getMetricValue(node.get('metric')).formattedValue;
     const metricValue = getMetricValue(node.get('metric')).height;
@@ -178,8 +179,10 @@ class NodesChartElements extends React.Component {
         size={100}
         isAnimated={isAnimated}
         contrastMode={contrastMode}
+        currentTopology={this.props.currentTopology}
         onMouseEnter={this.props.enterNode}
         onMouseLeave={this.props.leaveNode}
+        onClick={this.props.clickNode}
       />
     );
   }
@@ -288,10 +291,11 @@ function mapStateToProps(state) {
     searchQuery: state.get('searchQuery'),
     selectedNetwork: state.get('selectedNetwork'),
     selectedNodeId: state.get('selectedNodeId'),
+    currentTopology: state.get('currentTopology'),
     mouseOverNodeId: state.get('mouseOverNodeId'),
     mouseOverEdgeId: state.get('mouseOverEdgeId'),
     contrastMode: state.get('contrastMode'),
   };
 }
 
-export default connect(mapStateToProps, { enterNode, leaveNode })(NodesChartElements);
+export default connect(mapStateToProps, { enterNode, leaveNode, clickNode })(NodesChartElements);
