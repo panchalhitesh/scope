@@ -2,6 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { fromJS, Map as makeMap, List as makeList } from 'immutable';
+import { compact, isEmpty } from 'lodash';
 
 import NodeContainer from './node-container';
 import EdgeContainer from './edge-container';
@@ -98,7 +99,7 @@ class NodesChartElements extends React.Component {
   nodeBlurredDecorator(node) {
     const belongsToNetwork = this.props.selectedNetworkNodesIds.contains(node.get('id'));
     const noMatches = this.props.searchNodeMatches.get(node.get('id'), makeMap()).isEmpty();
-    const notMatched = (this.props.searchQuery && !node.get('highlighted') && noMatches);
+    const notMatched = (!isEmpty(this.props.searchTerms) && !node.get('highlighted') && noMatches);
     const notFocused = (this.props.selectedNodeId && !node.get('focused'));
     const notInNetwork = (this.props.selectedNetwork && !belongsToNetwork);
     return node.set('blurred', notMatched || notFocused || notInNetwork);
@@ -137,7 +138,7 @@ class NodesChartElements extends React.Component {
     const otherNodesSelected = this.props.hasSelectedNode && !sourceSelected && !targetSelected;
     const sourceNoMatches = searchNodeMatches.get(edge.get('source'), makeMap()).isEmpty();
     const targetNoMatches = searchNodeMatches.get(edge.get('target'), makeMap()).isEmpty();
-    const notMatched = this.props.searchQuery && (sourceNoMatches || targetNoMatches);
+    const notMatched = !isEmpty(this.props.searchTerms) && (sourceNoMatches || targetNoMatches);
     const sourceInNetwork = selectedNetworkNodesIds.contains(edge.get('source'));
     const targetInNetwork = selectedNetworkNodesIds.contains(edge.get('target'));
     const notInNetwork = this.props.selectedNetwork && (!sourceInNetwork || !targetInNetwork);
@@ -154,31 +155,33 @@ class NodesChartElements extends React.Component {
     const color = getNodeColor(node.get('rank'), node.get('label'), node.get('pseudo'));
 
     const metricColor = getMetricColor(node.get('metric'));
-    const metricLabel = getMetricValue(node.get('metric')).formattedValue;
-    const metricValue = getMetricValue(node.get('metric')).height;
+    const metricFormattedValue = getMetricValue(node.get('metric')).formattedValue;
+    const metricNumericValue = getMetricValue(node.get('metric')).height;
 
     return (
       <NodeContainer
         id={node.get('id')}
         key={node.get('id')}
-        type={node.get('shape')}
+        shape={node.get('shape')}
         label={node.get('label')}
         labelMinor={node.get('labelMinor')}
         color={color}
         metricColor={metricColor}
-        metricLabel={metricLabel}
-        metricValue={metricValue}
+        metricFormattedValue={metricFormattedValue}
+        metricNumericValue={metricNumericValue}
         matches={node.get('matches')}
         networks={node.get('networks')}
-        focused={node.get('focused')}
         highlighted={node.get('highlighted')}
         stacked={node.get('stack')}
         dx={node.get('x')}
         dy={node.get('y')}
         scale={node.get('scale')}
         size={100}
+        searchTerms={this.props.searchTerms}
         isAnimated={isAnimated}
         contrastMode={contrastMode}
+        forceSvg={this.props.exportingGraph}
+        showingNetworks={this.props.showingNetworks}
         currentTopology={this.props.currentTopology}
         onMouseEnter={this.props.enterNode}
         onMouseLeave={this.props.leaveNode}
@@ -288,12 +291,14 @@ function mapStateToProps(state) {
     nodeNetworks: nodeNetworksSelector(state),
     nodeMetric: nodeMetricSelector(state),
     selectedScale: selectedScaleSelector(state),
-    searchQuery: state.get('searchQuery'),
+    searchTerms: compact([state.get('searchQuery')]),
     selectedNetwork: state.get('selectedNetwork'),
     selectedNodeId: state.get('selectedNodeId'),
     currentTopology: state.get('currentTopology'),
     mouseOverNodeId: state.get('mouseOverNodeId'),
     mouseOverEdgeId: state.get('mouseOverEdgeId'),
+    exportingGraph: state.get('exportingGraph'),
+    showingNetworks: state.get('showingNetworks'),
     contrastMode: state.get('contrastMode'),
   };
 }

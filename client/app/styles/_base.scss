@@ -464,6 +464,37 @@ a {
   }
 }
 
+.matched-results {
+  background-color: $label-background-color;
+  text-align: center;
+
+  &-match {
+    font-size: $font-size-small;
+
+    &-wrapper {
+      display: inline-block;
+      margin: 1px;
+      padding: 2px 4px;
+      background-color: transparentize($color-blue-400, 0.9);
+    }
+
+    &-label {
+      color: $text-secondary-color;
+      margin-right: 0.5em;
+    }
+  }
+
+  &-more {
+    font-size: $font-size-tiny;
+    color: $color-blue-700;
+    margin-top: -2px;
+  }
+
+  .match {
+    background-color: transparentize($color-blue-400, 0.5);
+  }
+}
+
 .details {
   &-wrapper {
     position: fixed;
