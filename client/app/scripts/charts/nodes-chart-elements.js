@@ -165,6 +165,7 @@ class NodesChartElements extends React.Component {
         shape={node.get('shape')}
         label={node.get('label')}
         labelMinor={node.get('labelMinor')}
+        labelOffset={this.props.showingNetworks ? 25 : 0}
         color={color}
         metricColor={metricColor}
         metricFormattedValue={metricFormattedValue}
