@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"sort"
+	"time"
 
 	"github.com/ugorji/go/codec"
 	"github.com/weaveworks/ps"
@@ -137,4 +138,32 @@ func mapWrite(m ps.Map, encoder *codec.Encoder, encodeValue func(*codec.Encoder,
 		encodeValue(encoder, val)
 	})
 	z.EncSendContainerState(containerMapEnd)
+}
+
+// Now follow helpers for StringLatestMap
+
+// These let us sort a StringLatestMap strings by key
+func (m StringLatestMap) Len() int           { return len(m) }
+func (m StringLatestMap) Swap(i, j int)      { m[i], m[j] = m[j], m[i] }
+func (m StringLatestMap) Less(i, j int) bool { return m[i].key < m[j].key }
+
+func (m StringLatestMap) addMapEntries(ts time.Time, n map[string]string) StringLatestMap {
+	out := make(StringLatestMap, len(m), len(m)+len(n))
+	copy(out, m)
+	for k, v := range n {
+		out = append(out, stringLatestEntry{key: k, Value: v, Timestamp: ts})
+	}
+	sort.Sort(out)
+	for i := 1; i < len(out); { // shuffle down any duplicates
+		if out[i-1].key == out[i].key {
+			if out[i-1].Timestamp.Before(out[i].Timestamp) {
+				out = append(out[:i-1], out[i:]...)
+			} else {
+				out = append(out[:i], out[i+1:]...)
+			}
+			continue
+		}
+		i++
+	}
+	return out
 }
